@@ -255,6 +255,7 @@ const CertificateSlider = ()=> {
     SetShowSlider(false);
     };
 
+
     const upload = async (pdfArrayBuffer) => {
       if (pdfArrayBuffer) {
         try {
@@ -286,12 +287,18 @@ const CertificateSlider = ()=> {
           console.log("end")
           
 
-          await createCertificate(
-            certificateData.studentAccount,
-            certificateData.instituteAccount,
-            certificateData.courseName,
-            encryptedData,
-            ipfsHash);
+          if(encryptedData!= ""){
+            await createCertificate(
+              certificateData.studentAccount,
+              certificateData.instituteAccount,
+              certificateData.courseName,
+              encryptedData,
+              ipfsHash);
+          } else {
+            console.log("Data is is not encrypted");
+          }
+
+          
 
           alert("Successfully Certificate Uploaded");
           } else {

@@ -5,7 +5,7 @@ import { getStudentData } from '../../services/operations/StudentOperations';
 import { approveCertificate } from '../../services/operations/InstituteOperations';
 import CertificateSlider from './CertificateSlider';
 import SidebarInstitute from './SidebarInstitude';
-
+import CryptoJS from 'crypto-js';
 
 function CertificateApplication() {
   const { 
@@ -43,8 +43,6 @@ function CertificateApplication() {
 
   const handleApprove = async (data) => {
     try {
-      SetShowSlider(true);
-
       const result = await getStudentData(data.StudentId);
       console.log(result);
 
@@ -73,6 +71,7 @@ function CertificateApplication() {
 
         await approveCertificate(data.InstituteId, data._id);
         fetchData();
+        SetShowSlider(true);
     } catch (error) {
       console.error(error);
       setDashboardLoading(false);

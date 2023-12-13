@@ -15,7 +15,6 @@ function MyCertificates() {
 
   const [data, setData] = useState([])
   const [approvedCertificates, setApprovedCertificates] = useState([]);
-  const [links, setLinks] = useState([]);
   const secretKey = 'secret';
   const [decryptedDataArray, setDecryptedDataArray] = useState([]);
 
@@ -40,9 +39,13 @@ function MyCertificates() {
 
   const decryptData = async () => {
     try {
-      const decryptedArray = approvedCertificates.map((encryptedData) => {
+        const decryptedArray = approvedCertificates.map((encryptedData) => {
         const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
-        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        const decryptedObject = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        return {
+          ...decryptedObject,
+          ed: encryptedData,
+        };
       });
 
       console.log("Decrypted Array:", decryptedArray);
@@ -55,23 +58,15 @@ function MyCertificates() {
     }
   }
 
-  const fetchData2 = async () => {
-    setLinks([]);
-    const fetchDataForId = async (link) => {
-      try {
-        const response = await getIpfsHash(account, link);
-        setLinks((prevData) => [...prevData, response]);
-      } catch (error) {
-        console.error(`Error fetching data for ID ${link}:`, error);
-      }
-    };
-    approvedCertificates.forEach((link) => fetchDataForId(link));
-  };
-
-  
-  function DownloadButton({ fileLink, fileName }) {
+  function DownloadButton({ ed, fileName }) {
     const handleDownload = async () => {
       try {
+
+        console.log("this is ed")
+        console.log(ed)
+
+        const fileLink = await getIpfsHash(account, ed);
+
         const response = await fetch(fileLink);
         const data = await response.blob();
   
@@ -101,7 +96,6 @@ function MyCertificates() {
 
   useEffect(() => {
     decryptData();
-    fetchData2();
   }, [approvedCertificates]);
 
   return (
@@ -142,7 +136,7 @@ function MyCertificates() {
                   <p>Course Name: {certificate.courseName}</p>
                   <p>Student Account: {certificate.studentAccount}</p>
                   <p>Institute Account: {certificate.instituteAccount}</p>
-                  <DownloadButton fileLink={links[index]} fileName={certificate.courseName} />
+                  <DownloadButton ed={certificate.ed} fileName={certificate.courseName} />
                 </div>
               ))}
               </div>
