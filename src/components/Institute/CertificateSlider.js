@@ -15,6 +15,7 @@ import PCertificate3 from "../../assets/4.png";
 import PCertificate4 from "../../assets/5.png";
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import QRCode from 'qrcode';
 
 const CertificateSlider = ()=> {
 
@@ -25,13 +26,12 @@ const CertificateSlider = ()=> {
     certificateData,
     createCertificate,
     encryptedData,
-    qr
+    qr,SetQr
   } = useContext(AppContext);  
 
   const goBack = () => {
     SetShowSlider(false);
   };
-  
   
   const pdfGenerator0 = () => {
     var doc = new jsPDF("landscape", "px", "a4", "false");
@@ -91,7 +91,7 @@ const CertificateSlider = ()=> {
     upload(generatedPDFArrayBuffer);
   };
   
-  const pdfGenerator2 = () => {
+  const pdfGenerator2 = async () => {
     var doc = new jsPDF("landscape", "px", "a4", "false");
     doc.addImage(PCertificate2, "PNG", 65, 20, 500, 400);
     doc.setFontSize(40);
@@ -178,6 +178,18 @@ const CertificateSlider = ()=> {
   };
   
   const generate = async () => {
+
+    const secretKey = 'secret'; 
+    const a = CryptoJS.AES.encrypt(JSON.stringify(certificateData), secretKey).toString();
+    console.log(a)
+        if(a!= "")
+        {
+          const response = await QRCode.toDataURL(a);
+          SetQr(response);
+        } else {
+          console.alert("Error occured");
+        }
+
     if(index===0)
     {
       generateAndUploadPDF0();

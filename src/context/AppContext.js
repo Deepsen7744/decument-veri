@@ -18,7 +18,7 @@ export default function AppContextProvider ({children}) {
     const [account, setAccount] = useState("");
     const [contract, setContract] = useState(null);
     const [provider, setProvider] = useState(null);
-    const [contractAddress, setContractAddress] = useState("0xd3Ed5387FCB9EE99adC0b9E6F87FB9b0e793d647");
+    const [contractAddress, setContractAddress] = useState("0x4f1c6e85eb859011EeDdBE994c08CB85d3809842");
     const [certificateData, SetCertificateData] = useState({});
     const [showSlider, SetShowSlider] = useState(false);
     const [index,setIndex] = useState(-1);
@@ -202,6 +202,7 @@ export default function AppContextProvider ({children}) {
     }
 
     async function createCertificate(_studentAddress,_instituteAddress,_courseName,_transactionHash,_ipfsHash){
+      console.log("inside app context"+_transactionHash)
       try{
         await contract.createCertificate(_studentAddress,_instituteAddress,_courseName,_transactionHash,_ipfsHash);
       } catch(error){

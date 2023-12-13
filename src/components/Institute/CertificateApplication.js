@@ -3,10 +3,8 @@ import { AppContext } from '../../context/AppContext';
 import { getNonApprovedApplications } from '../../services/operations/InstituteOperations';
 import { getStudentData } from '../../services/operations/StudentOperations';
 import { approveCertificate } from '../../services/operations/InstituteOperations';
-import CryptoJS from 'crypto-js';
 import CertificateSlider from './CertificateSlider';
 import SidebarInstitute from './SidebarInstitude';
-import QRCode from 'qrcode';
 
 
 function CertificateApplication() {
@@ -65,8 +63,13 @@ function CertificateApplication() {
         const secretKey = 'secret'; 
         SetEncryptedData(CryptoJS.AES.encrypt(JSON.stringify(certificateData), secretKey).toString());
 
-        const response = await QRCode.toDataURL(encryptedData);
-        SetQr(response);
+        // const response = await QRCode.toDataURL(encryptedData);
+        // if(response!= "")
+        // {
+        //   SetQr(response);
+        // } else {
+        //   console.alert("Error occured");
+        // }
 
         await approveCertificate(data.InstituteId, data._id);
         fetchData();

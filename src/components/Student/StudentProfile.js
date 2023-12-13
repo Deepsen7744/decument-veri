@@ -47,7 +47,7 @@ function StudentProfile() {
         <p>Acc Number: {data.AccountNumber}</p>
         <p>Email: {data.email}</p>
         <p>Phone: {data.tel}</p>
-        <p>Date of Joining: {data.date}</p>
+        <p>Date of Birth: {data.date}</p>
       </div>
     </div>
   )
