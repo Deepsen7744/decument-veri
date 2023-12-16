@@ -15,21 +15,20 @@ export default function AppContextProvider ({children}) {
       id: ""
     });
 
+    const [c1, setC1] = useState();
+    const [c2, setC2] = useState();
+
+    const [call, setCall] = useState(false);
     const [account, setAccount] = useState("");
     const [contract, setContract] = useState(null);
     const [provider, setProvider] = useState(null);
     const [contractAddress, setContractAddress] = useState("0xcB1a4916d8d1F96Ca601BB838CF2611Bcb54852d");
     const [certificateData, SetCertificateData] = useState({});
     const [showSlider, SetShowSlider] = useState(false);
-    const [index,setIndex] = useState(-1);
-    const [qr, SetQr] = useState();
+    const [index,setIndex] = useState(0);
+    // const [qr, SetQr] = useState();
     // const [ipfsHash, SetIpfsHash] = useState("");
     const [encryptedData, SetEncryptedData] = useState("");
-
-    const handleIndex = (data) => {
-      setIndex(data);
-      console.log(data);
-    };
 
     async function getCertificateOwners(_transactionHash){
       try{
@@ -289,13 +288,12 @@ export default function AppContextProvider ({children}) {
       setContractAddress,
       index,
       setIndex,
-      handleIndex,
       certificateData, 
       SetCertificateData,
       showSlider, 
       SetShowSlider,
-      qr, 
-      SetQr,
+      // qr, 
+      // SetQr,
       encryptedData, 
       SetEncryptedData,
       getCertificateOwners,
@@ -315,7 +313,11 @@ export default function AppContextProvider ({children}) {
       dashboardLoading, 
       setDashboardLoading,
       result, 
-      setResult
+      setResult,
+      call, 
+      setCall,
+      c1, setC1,
+      c2, setC2
     }
 
     return <AppContext.Provider value={value}>

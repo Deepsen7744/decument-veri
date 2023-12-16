@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { RxDotFilled } from 'react-icons/rx';
 import first from "../../assets/carousel1.png"
@@ -16,24 +16,24 @@ import PCertificate4 from "../../assets/5.png";
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import QRCode from 'qrcode';
+import { approveCertificate } from '../../services/operations/InstituteOperations';
 
 const CertificateSlider = ()=> {
 
-  const {
-    handleIndex, 
+  const { 
     SetShowSlider,
-    index,
     certificateData,
     createCertificate,
     encryptedData,
-    qr,SetQr
+    SetQr,setCall,c1,c2
   } = useContext(AppContext);  
 
   const goBack = () => {
     SetShowSlider(false);
   };
   
-  const pdfGenerator0 = () => {
+  const pdfGenerator0 = (qr) => {
+    if(qr!=null){
     var doc = new jsPDF("landscape", "px", "a4", "false");
     doc.addImage(PCertificate0, "PNG", 65, 20, 500, 400);
     doc.setFontSize(38);
@@ -55,14 +55,16 @@ const CertificateSlider = ()=> {
     doc.save(`${certificateData.StudentName}'s_certificate.pdf`);
     const pdfArrayBuffer = doc.output("arraybuffer");
     return pdfArrayBuffer;
+    }
   };
 
-  const generateAndUploadPDF0 = () => {
-    const generatedPDFArrayBuffer = pdfGenerator0();
+  const generateAndUploadPDF0 = (qrData) => {
+    const generatedPDFArrayBuffer = pdfGenerator0(qrData);
     upload(generatedPDFArrayBuffer);
   };
   
-  const pdfGenerator1 = () => {
+  
+  const pdfGenerator1 = (qr) => {
     var doc = new jsPDF("landscape", "px", "a4", "false");
     doc.addImage(PCertificate1, "PNG", 65, 20, 500, 400);
     doc.setFontSize(38);
@@ -86,12 +88,13 @@ const CertificateSlider = ()=> {
     return pdfArrayBuffer;
   };
 
-  const generateAndUploadPDF1 = () => {
-    const generatedPDFArrayBuffer = pdfGenerator1();
+  const generateAndUploadPDF1 = (qrData) => {
+    const generatedPDFArrayBuffer = pdfGenerator1(qrData);
     upload(generatedPDFArrayBuffer);
   };
   
-  const pdfGenerator2 = async () => {
+  
+  const pdfGenerator2 = async (qr) => {
     var doc = new jsPDF("landscape", "px", "a4", "false");
     doc.addImage(PCertificate2, "PNG", 65, 20, 500, 400);
     doc.setFontSize(40);
@@ -115,12 +118,13 @@ const CertificateSlider = ()=> {
     return pdfArrayBuffer;
   };
 
-  const generateAndUploadPDF2 = () => {
-    const generatedPDFArrayBuffer = pdfGenerator2();
+  const generateAndUploadPDF2 = (qrData) => {
+    const generatedPDFArrayBuffer = pdfGenerator2(qrData);
     upload(generatedPDFArrayBuffer);
   };
   
-  const pdfGenerator3 = () => {
+  
+  const pdfGenerator3 = (qr) => {
     var doc = new jsPDF("landscape", "px", "a4", "false");
     doc.addImage(PCertificate3, "PNG", 65, 20, 500, 400);
     doc.setFontSize(38);
@@ -144,12 +148,12 @@ const CertificateSlider = ()=> {
     return pdfArrayBuffer;
   };
 
-  const generateAndUploadPDF3 = () => {
-    const generatedPDFArrayBuffer = pdfGenerator3();
+  const generateAndUploadPDF3 = (qrData) => {
+    const generatedPDFArrayBuffer = pdfGenerator3(qrData);
     upload(generatedPDFArrayBuffer);
   };
-  
-  const pdfGenerator4 = () => {
+   
+  const pdfGenerator4 = (qr) => {
     var doc = new jsPDF("landscape", "px", "a4", "false");
     doc.addImage(PCertificate4, "PNG", 65, 20, 500, 400);
     doc.setFontSize(25);
@@ -172,46 +176,52 @@ const CertificateSlider = ()=> {
     return pdfArrayBuffer;
   };
 
-  const generateAndUploadPDF4 = () => {
-    const generatedPDFArrayBuffer = pdfGenerator4();
+  
+  const generateAndUploadPDF4 = (qrData) => {
+    const generatedPDFArrayBuffer = pdfGenerator4(qrData);
     upload(generatedPDFArrayBuffer);
   };
-  
-  const generate = async () => {
 
-    const secretKey = 'secret'; 
-    const a = CryptoJS.AES.encrypt(JSON.stringify(certificateData), secretKey).toString();
-    console.log(a)
-        if(a!= "")
-        {
-          const response = await QRCode.toDataURL(a);
-          SetQr(response);
-        } else {
-          console.alert("Error occured");
+
+  const generate = async (ci) => {
+    try {
+      const secretKey = 'secret';
+      const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(certificateData), secretKey).toString();
+      console.log(encryptedData);
+  
+      if (encryptedData !== "") {
+        const response = await QRCode.toDataURL(encryptedData);
+        // SetQr(response);
+  
+        // Call the appropriate generateAndUploadPDF function based on the current index
+        switch (ci) {
+          case 0:
+            generateAndUploadPDF0(response);
+            break;
+          case 1:
+            generateAndUploadPDF1(response);
+            break;
+          case 2:
+            generateAndUploadPDF2(response);
+            break;
+          case 3:
+            generateAndUploadPDF3(response);
+            break;
+          case 4:
+            generateAndUploadPDF4(response);
+            break;
+          default:
+            console.log("Invalid index");
+            break;
         }
+      } else {
+        console.alert("Error occurred");
+      }
+    } catch (error) {
+      console.error("Error generating QR code:", error);
+    }
+  };
 
-    if(index===0)
-    {
-      generateAndUploadPDF0();
-    }
-    if(index===1)
-    {
-      generateAndUploadPDF1();
-    }
-    if(index===2)
-    {
-      generateAndUploadPDF2();
-    }
-    if(index===3)
-    {
-      generateAndUploadPDF3();
-    }
-    if(index===4)
-    {
-      generateAndUploadPDF4();
-    }
-  }
-  
 
   const slides = [
     {
@@ -249,12 +259,6 @@ const CertificateSlider = ()=> {
     setCurrentIndex(slideIndex);
   };
 
-  const sendIndex = () => {
-    handleIndex(currentIndex);
-    generate();
-    SetShowSlider(false);
-    };
-
 
     const upload = async (pdfArrayBuffer) => {
       if (pdfArrayBuffer) {
@@ -262,6 +266,8 @@ const CertificateSlider = ()=> {
           const formData = new FormData();
           const pdfBlob = new Blob([pdfArrayBuffer], { type: "application/pdf" });
           formData.append("file", pdfBlob, "certificate.pdf");
+
+          console.log("uploading ..............")
   
           const resFile = await axios({
             method: "post",
@@ -275,6 +281,7 @@ const CertificateSlider = ()=> {
           });
   
           const ipfsHash = `https://gateway.pinata.cloud/ipfs/${resFile.data.IpfsHash}`;
+
           console.log(ipfsHash);
           if(ipfsHash){
 
@@ -285,7 +292,6 @@ const CertificateSlider = ()=> {
           console.log(encryptedData)
           console.log(ipfsHash)
           console.log("end")
-          
 
           if(encryptedData!= ""){
             await createCertificate(
@@ -297,9 +303,9 @@ const CertificateSlider = ()=> {
           } else {
             console.log("Data is is not encrypted");
           }
-
           
-
+          setCall(true);
+          
           alert("Successfully Certificate Uploaded");
           } else {
             alert("Some problem occured");
@@ -338,7 +344,7 @@ const CertificateSlider = ()=> {
           </div>
         ))}
       </div>
-              <button className='mt-7 rounded-md text-l font-semibold bg-[#ef5b5b] text-white border-2 p-2' onClick={sendIndex}>Create Certificate</button>
+              <button className='mt-7 rounded-md text-l font-semibold bg-[#ef5b5b] text-white border-2 p-2' onClick={() => generate(currentIndex)}>Create Certificate</button>
     </div>
   );
 }

@@ -19,7 +19,7 @@ function CertificateApplication() {
     SetShowSlider,
     encryptedData, 
     SetEncryptedData,
-    SetQr} = useContext(AppContext);
+    call, setCall,c1, setC1,c2, setC2} = useContext(AppContext);
 
   const [data, setData] = useState([]);
 
@@ -41,12 +41,42 @@ function CertificateApplication() {
     fetchData();
   }, [result.id]);
 
+
+  useEffect(() => {
+    const fetchData2 = async () => {
+      try {
+        if (call === true) {
+          console.log("Backend m approve hone aa gaya ...............");
+          console.log(c1);
+          console.log(c2);
+          console.log("ab hogi call");
+  
+          // Assuming approveCertificate is an asynchronous function
+          await approveCertificate(c1, c2);
+          
+          console.log("ho gai --------------");
+          SetShowSlider(false);
+          setCall(false);
+          fetchData();
+        }
+      } catch (error) {
+        console.error("Error in useEffect:", error);
+        // Handle the error as needed
+      }
+    };
+  
+    // Call the asynchronous function
+    fetchData2();
+  
+    // Dependencies array with only 'call'
+  }, [call]);
+  
   const handleApprove = async (data) => {
     try {
       const result = await getStudentData(data.StudentId);
       console.log(result);
-
-      SetCertificateData({
+  
+      const newCertificateData = {
         instituteName: data.instituteName,
         StartDate: new Date(data.StartDate).toISOString().slice(2, 10),
         EndDate: new Date(data.EndDate).toISOString().slice(2, 10),
@@ -55,29 +85,44 @@ function CertificateApplication() {
         courseName: data.courseName,
         studentAccount: result.data.AccountNumber,
         instituteAccount: account
-      });
+      };
 
-        console.log(certificateData);
-        const secretKey = 'secret'; 
-        SetEncryptedData(CryptoJS.AES.encrypt(JSON.stringify(certificateData), secretKey).toString());
+      setC1(data.InstituteId);
+      setC2(data._id);
 
-        // const response = await QRCode.toDataURL(encryptedData);
-        // if(response!= "")
-        // {
-        //   SetQr(response);
-        // } else {
-        //   console.alert("Error occured");
-        // }
-
-        await approveCertificate(data.InstituteId, data._id);
-        fetchData();
-        SetShowSlider(true);
+      // Set the new certificate data
+      SetCertificateData(newCertificateData);
+      console.log(certificateData)
+      // Call a function to handle side effects after state updates
+      handleAfterApprove(newCertificateData);
     } catch (error) {
       console.error(error);
       setDashboardLoading(false);
     }
   };
-
+  
+  // Separate function to handle side effects after state updates
+  const handleAfterApprove = (newCertificateData) => {
+    console.log("ye h certificate ka data");
+    console.log(newCertificateData);
+  
+    // Make sure the data is not undefined before encrypting
+    if (newCertificateData) {
+      const secretKey = 'secret';
+      const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(newCertificateData), secretKey).toString();
+  
+      // Use the callback form of setEncryptedData to ensure the latest state
+      SetEncryptedData(prevEncryptedData => {
+        console.log("Previous encrypted data:", prevEncryptedData);
+        console.log("New encrypted data:", encryptedData);
+        SetShowSlider(true);
+        return encryptedData;
+      });
+  
+      console.log("data lelo");
+    }
+  };
+  
 
   return (
     <div className="    pt-16   flex flex-col">

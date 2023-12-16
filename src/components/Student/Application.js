@@ -7,14 +7,40 @@ import { RegisteredInst } from '../../services/operations/InstituteOperations'
 import SidebarStudent from './SidebarStudent'
 
 function Application() {
-  const { result, dashboardLoading, setDashboardLoading } =
+  const { result, dashboardLoading, setDashboardLoading, getCourses } =
     useContext(AppContext)
   const {
     handleSubmit,
     formState: { errors },
     register,
   } = useForm() // Use 'register' method
+
   const [data, setData] = useState([])
+  const [cource, setCourse] = useState([]);
+  const [selectedInstitute, setSelectedInstitute] = useState('');
+
+  useEffect(() => {
+    fetchData2();
+  }, [selectedInstitute]);
+
+  const fetchData2 = async () => {
+    if (selectedInstitute) {
+      try {
+        setCourse([]);
+        console.log("Fetching courses for institute:", selectedInstitute);
+
+        const inst = data.find(item => item._id === selectedInstitute);
+        console.log(inst.AccountNumber);
+
+        const response = await getCourses(inst.AccountNumber);
+        setCourse(response);
+        setDashboardLoading(false);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        setDashboardLoading(false);
+      }
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -62,35 +88,56 @@ function Application() {
           </div>
 
           <div>
-            <label>Institute Name:</label>
-            <select
-              className="w-32"
-              {...register('instituteName', {
-                required: 'Institute ID is required',
-              })}
-            >
-              {dashboardLoading ? (
-                <option value="">Loading Institutes...</option>
-              ) : (
-                data.map((institute) => (
-                  <option key={institute._id} value={institute._id}>
-                    {institute.instituteName}
-                  </option>
-                ))
-              )}
-            </select>
-            {errors._id && <span>{errors._id.message}</span>}
-          </div>
+          <label>Institute Name:</label>
+          <select
+            className="w-32"
+            {...register('instituteName', {
+              required: 'Institute ID is required',
+            })}
+            onChange={(e) => setSelectedInstitute(e.target.value)}
+            value={selectedInstitute || 'defaultValue'} // Set the default value here
+          >
+            <option value="defaultValue" disabled hidden>
+              Select an Institute
+            </option>
+            {dashboardLoading ? (
+              <option value="">Loading Institutes...</option>
+            ) : (
+              data.map((institute) => (
+                <option key={institute._id} value={institute._id}>
+                  {institute.instituteName}
+                </option>
+              ))
+            )}
+          </select>
+          {errors._id && <span>{errors._id.message}</span>}
+        </div>
 
-          <div>
-            <label>Course Name:</label>
-            <input
-              {...register('courseName', {
-                required: 'Course Name is required',
-              })}
-            />
-            {errors.courseName && <span>{errors.courseName.message}</span>}
-          </div>
+        <div>
+        <label>Course Name:</label>
+        {cource.length > 0 ? (
+          <select
+            className="w-32"
+            {...register('courseName', {
+              required: 'Course Name is required',
+            })}
+          >
+            <option value="" disabled selected>
+              Select a course
+            </option>
+            {cource.map((course) => (
+              <option key={course} value={course}>
+                {course}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span>No courses available</span>
+        )}
+        {errors.courseName && <span>{errors.courseName.message}</span>}
+      </div>
+
+
 
           <div>
             <label>Start Date:</label>

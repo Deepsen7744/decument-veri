@@ -2,6 +2,8 @@ const Institute = require("../models/Institute");
 const Student = require("../models/Student");
 const Application = require("../models/Application");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const mailSender = require("../utils/mailSender");
+const emailTemplate = require("../Templates/ApprovalTemplate");
 
 exports.signup = async (req, res) => {
     try {
@@ -143,6 +145,8 @@ exports.approveCertificate = async (req, res)=> {
 
         ////////////////////
 
+        console.log("got the id");
+        console.log(application.StudentId);
         const student = await Student.findById(application.StudentId);
 
         try {

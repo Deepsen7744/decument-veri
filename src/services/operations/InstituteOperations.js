@@ -106,6 +106,9 @@ export const getApprovedApplications = async (id) => {
 };
 
 export const approveCertificate = async (id,aplid) => {
+    console.log("aa gai ")
+    console.log(id)
+    console.log(aplid)
     const toastId = toast.loading("Loading...");
     const url =`${PUT_APPROVE_CERTIFICATE}?id=${id}&aplid=${aplid}`
     let result = null;
