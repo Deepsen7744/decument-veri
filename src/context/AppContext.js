@@ -292,8 +292,6 @@ export default function AppContextProvider ({children}) {
       SetCertificateData,
       showSlider, 
       SetShowSlider,
-      // qr, 
-      // SetQr,
       encryptedData, 
       SetEncryptedData,
       getCertificateOwners,
