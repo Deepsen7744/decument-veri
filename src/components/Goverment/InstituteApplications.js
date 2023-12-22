@@ -9,16 +9,18 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { AwesomeButton } from 'react-awesome-button'
+import { BiSolidChevronsDown } from 'react-icons/bi'
+import { BiSolidChevronsUp } from 'react-icons/bi'
 
 import './Loading.css'
 import './Card1.css'
 
 function InsttituteApplications() {
-  const [showMore, setShowMore] = useState(false)
+  const [data, setData] = useState([])
+  const [sliderKey, setSliderKey] = useState(0)
+  const initialShowMoreState = data.map(() => false)
+  const [showMore, setShowMore] = useState(initialShowMoreState)
 
-  const toggleShowMore = () => {
-    setShowMore(!showMore)
-  }
   const settings = {
     dots: true,
     infinite: true,
@@ -32,8 +34,13 @@ function InsttituteApplications() {
 
   const { result, dashboardLoading, setDashboardLoading, approveInstitute } =
     useContext(AppContext)
-  const [data, setData] = useState([])
-  const [sliderKey, setSliderKey] = useState(0)
+
+  const toggleShowMore = (index) => {
+    // Toggle the state for the specific item
+    const newShowMore = [...showMore]
+    newShowMore[index] = !newShowMore[index]
+    setShowMore(newShowMore)
+  }
 
   const fetchData = async () => {
     try {
@@ -74,6 +81,9 @@ function InsttituteApplications() {
       <div className="   pl-56 pt-7  h-[100vh]  ">
         <div>
           <div className="   w-3/4 m-auto ">
+            <h2 className="font-inter text-6xl m-2">
+              Not Registered Institute
+            </h2>
             {dashboardLoading ? (
               <div className="   top-64" class="ring">
                 Loading
@@ -81,53 +91,78 @@ function InsttituteApplications() {
               </div>
             ) : (
               <div className="mt-20">
-                {data.map((item) => (
+                {data.map((item, index) => (
                   <div
+                    className="flex transition-transform transform transition-delay-500 hover:translate-x-6 flex-row m-4 items-center"
                     key={item._id}
-                    className={`card  ${showMore ? 'show-more' : ' '} `}
                   >
-                    <div className="left">
-                      <img
-                        className="image1"
-                        src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                        alt=""
-                      />
-                    </div>
-                    <div className="right">
-                      <div className="left-section">
-                        <div className="name">Aspire study</div>
-                        <div className="email">deepsen771@gmail.com</div>
-                        <div className="account">93932r373474</div>
-
-                        {/* Hidden section */}
-                        {showMore && (
-                          <div className="hidden-section">
-                            <p>Additional information goes here...</p>
-                          </div>
+                    <img
+                      className="h-16 mr-6 shadow-xl rounded-full"
+                      src={item.image}
+                      alt={item.email}
+                    />
+                    <div className=" shadow-inner bg-slate-200 text-richblack-900 font-medium w-[80%] rounded-full px-16 py-4">
+                      <p>
+                        <span className=" text-red-500 font-semibold">
+                          Name:{' '}
+                        </span>{' '}
+                        {item.instituteName}
+                      </p>
+                      <p>
+                        <span className=" text-red-500 font-semibold">
+                          Account Number:
+                        </span>{' '}
+                        {item.AccountNumber}
+                        {/* Render additional content if showMore is true */}
+                        {showMore[index] && (
+                          <>
+                            <p>
+                              <span className=" text-red-500 font-semibold">
+                                Contact Number:
+                              </span>{' '}
+                              {item.contactNumber}
+                            </p>
+                            <p>
+                              <span className=" text-red-500 font-semibold">
+                                Email:{' '}
+                              </span>{' '}
+                              {item.email}
+                            </p>
+                            <p>
+                              <span className=" text-red-500 font-semibold">
+                                Status:
+                              </span>{' '}
+                              {item.Approved}
+                            </p>
+                          </>
                         )}
-
-                        {/* Show More button */}
-                        <div
-                          className="show-more-text"
-                          onClick={toggleShowMore}
+                        {/* Toggle button based on showMore state */}
+                      </p>
+                      <div className="  flex   gap-3  flex-row">
+                        <button
+                          className=" bg-blue-500 px-2 py-1 text-white text-sm mt-1 rounded-xl font-semibold flex flex-row justify-center items-center"
+                          onClick={() => toggleShowMore(index)}
                         >
-                          {showMore ? 'Show Less' : 'Show More'}
-                          <span
-                            className={`arrow-icon ${showMore ? 'up' : 'down'}`}
-                          ></span>
-                        </div>
-                      </div>
+                          {showMore[index] ? (
+                            <>
+                              Show Less <BiSolidChevronsUp />
+                            </>
+                          ) : (
+                            <>
+                              Show More <BiSolidChevronsDown />
+                            </>
+                          )}
+                        </button>
 
-                      <div className="right-section">
                         {item.Approved === 'NotApproved' && (
-                          <AwesomeButton
-                            className="  bg-indigo-500 text-white text-lg px-6 py-1 rounded-xl"
-                            onPress={() =>
+                          <button
+                            className="bg-blue-500 px-2 py-1 text-white text-sm mt-1 rounded-xl font-semibold flex flex-row justify-center items-center"
+                            onClick={() =>
                               handleApprove(item._id, item.AccountNumber)
                             }
                           >
                             Approve
-                          </AwesomeButton>
+                          </button>
                         )}
                       </div>
                     </div>

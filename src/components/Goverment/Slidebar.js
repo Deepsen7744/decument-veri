@@ -48,14 +48,7 @@ const Slidebar = () => {
       <div className="container">
         <div className="navigation">
           <ul>
-            <li>
-              <img
-                style={{ zIndex: '50' }}
-                className="   pt-4   pr-4   "
-                src="https://img.freepik.com/free-photo/india-republic-day-celebration-with-3d-building_23-2151015993.jpg?t=st=1703002425~exp=1703006025~hmac=f204e575d7eb453395ec032990fe88aef337c36f74c8cf27e7eda7c35a4f758b&w=1060"
-                alt="Italian  sdfds Trulli"
-              />
-            </li>
+            <li>{/* for something logo */}</li>
             <li>
               <Link to={'/dashboard/goverment/goverment-profile'}>
                 <span className="icon">
