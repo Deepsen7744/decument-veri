@@ -3,7 +3,7 @@ require('@nomiclabs/hardhat-waffle')
 require('@nomiclabs/hardhat-ethers')
 
 const MYGANACHE_PRIVATE_KEY =
-  '0x07a7e4b73d0e3c93764db1ad03a4cc1eb3961427290f3fc12e338ed13459f622'
+  '0x35ee1e1f976103f071b1354c23032878e10edb50ce33f1004ab93dc395a4b95d'
 
 module.exports = {
   solidity: '0.8.19',

@@ -30,6 +30,7 @@ import {
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { BiMenuAltLeft } from 'react-icons/bi'
+import GovHome from './components/govhome/GovHome'
 
 const GovDashboard = () => {
   const { result } = useContext(AppContext)
@@ -56,9 +57,9 @@ const GovDashboard = () => {
       <Box>
         <div className="    pt-16   flex flex-col">
           <Slidebar />
-          <div className="      pl-80 pt-7">
+          <div className="  pl-80 pt-7">
             <div>
-              oekfpksappslapcflspdcpkskdlcldsllclcdsjfkdskjvdmvlmdlmvkfdomvmdfkvdf{' '}
+              <GovHome />
             </div>
           </div>
         </div>
